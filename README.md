@@ -17,11 +17,14 @@ The plan for this project is as follows:
 WINDOWS: Before building, add the path to your local copy of the SDL2 library to and environment variable called "SDL2"
 
 To build this project, create a new directory called "build"
+
 From this directory, call `cmake ../`
+
 From the build directory, use preferred build tool to compile an executable
 
 ### Running
 
 Create a new directory called "bin"
-Move the executable and a copy of the SDL.dll file to the bin directory
+
+
 Run that exe!

@@ -2,6 +2,7 @@
 #include <SDL.h>
 
 #include "res_path.h"
+#include "cleanup.h"
 
 int main(int, char**)
 {
@@ -34,7 +35,7 @@ int main(int, char**)
 	// Handle renderer creation errors and clean up
 	if(ren == nullptr)
 	{
-		SDL_DestroyWindow(win);
+        cleanup(win);
 		std::cout << "SDL_CreateRenderer Error: " << SDL_GetError() << std::endl;
 		SDL_Quit();
 		return 1;
@@ -48,8 +49,7 @@ int main(int, char**)
 	// Handle SDL_Surface creation errors and clean up
 	if(bmp == nullptr)
 	{
-		SDL_DestroyRenderer(ren);
-		SDL_DestroyWindow(win);
+        cleanup(ren, win);
 		std::cout << "SDL_LoadBMP Error: " << SDL_GetError() << std::endl;
 		SDL_Quit();
 		return 1;
@@ -58,12 +58,11 @@ int main(int, char**)
 	// Create a texture from the surface
 	SDL_Texture *tex = SDL_CreateTextureFromSurface(ren, bmp);
 	// Release the surface from memory
-	SDL_FreeSurface(bmp);
+    cleanup(bmp);
 	// Handle texture creation errors and clean up
 	if(tex == nullptr)
 	{
-		SDL_DestroyRenderer(ren);
-		SDL_DestroyWindow(win);
+        cleanup(ren, win);
 		std::cout << "SDL_CreateTextureFromSurface Error: " << SDL_GetError() << std::endl;
 		SDL_Quit();
 		return 1;
@@ -83,9 +82,7 @@ int main(int, char**)
 	}
 	
 	// Clean up objects and quit
-	SDL_DestroyTexture(tex);
-	SDL_DestroyRenderer(ren);
-	SDL_DestroyWindow(win);
+    cleanup(tex, ren, win);
 	SDL_Quit();
 
 	return 0;

@@ -10,6 +10,10 @@ The plan for this project is as follows:
 2. Implement game loop to allow interaction with rendered environment
 3. Graduate to a new repository where the project will evolve into a game engine (and maybe even a game)
 
+Currently, this project is following [this tutorial](https://www.willusher.io/pages/sdl2/)
+
+
+
 ## Project Setup
 
 ### Building

@@ -16,22 +16,23 @@ void renderTexture(SDL_Texture* tex, SDL_Renderer* ren, int x, int y);
 int main(int, char**)
 {
 	// Create vars
-	SDL_Window* win;
-	SDL_Renderer* ren;
+	SDL_Window* window;
+	SDL_Renderer* renderer;
 	
 	// Init SDL and error on failure
 	if (SDL_Init(SDL_INIT_VIDEO) != 0)
 	{
-		std::cout << "SDL_Init Error: " << SDL_GetError() << std::endl;
+        logSDLError(std::cout, "SDL_Init");
 		return 1;
 	}
 	
-	// Create SDL_Window at 100, 100 with width 640 and height 480 
-	win = SDL_CreateWindow("Hello World", 100, 100, 640, 480, SDL_WINDOW_SHOWN);
+	// Create SDL_Window at 100, 100
+	window = SDL_CreateWindow("LearningSDL", 100, 100, SCREEN_WIDTH,
+            SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
 	// Handle window creation errors and clean up
-	if(win == nullptr)
+	if(window == nullptr)
 	{
-		std::cout << "SDL_CreateWindow Error: " << SDL_GetError() << std::endl;
+        logSDLError(std::cout, "CreateWindow");
 		SDL_Quit();
 		return 1;
 	}
@@ -40,12 +41,13 @@ int main(int, char**)
 	// -1 specifies that we will use the first graphics driver that supports our selected options
 	// option SDL_RENDERER_ACCELERATED requests a hardware accelerated renderer
 	// option SDL_RENDERER_PRESENTVSYNC requests that VSync be enabled
-	ren = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+	renderer = SDL_CreateRenderer(window, -1,
+            SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 	// Handle renderer creation errors and clean up
-	if(ren == nullptr)
+	if(renderer == nullptr)
 	{
-        cleanup(win);
-		std::cout << "SDL_CreateRenderer Error: " << SDL_GetError() << std::endl;
+        logSDLError(std::cout, "CreateRenderer");
+        cleanup(window);
 		SDL_Quit();
 		return 1;
 	}
@@ -137,4 +139,22 @@ SDL_Texture* loadTexture(const std::string& file, SDL_Renderer* ren)
     return texture;
 }
 
-`
+/**
+ * renderTexture: Draw an SDL_Texture to an SDL_Renderer at position x, y,
+ * preserving the texture's width and height
+ * @param tex The source texture
+ * @param ren The renderer to which the texture will be drawn
+ * @param x The x coordinate to draw to
+ * @param y The y coordinate to draw to
+ */
+void renderTexture(SDL_Texture* tex, SDL_Renderer* ren, int x, int y)
+{
+    // Setup the destination rectangle to be at position x, y
+    SDL_Rect dst;
+    dst.x = x;
+    dst.y = y;
+    // Query the texture to get its width and height
+    SDL_QueryTexture(tex, NULL, NULL, &dst.w, &dst.h);
+    SDL_RenderCopy(ren, tex, NULL, &dst);
+}
+

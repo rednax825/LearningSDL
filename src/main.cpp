@@ -4,6 +4,15 @@
 #include "res_path.h"
 #include "cleanup.h"
 
+// Declare constants
+const int SCREEN_WIDTH = 640;
+const int SCREEN_HEIGHT = 480;
+
+// Function Prototypes
+void logSDLError(std::ostream& os, const std::string& msg);
+SDL_Texture* loadTexture(const std::string& file, SDL_Renderer* ren);
+void renderTexture(SDL_Texture* tex, SDL_Renderer* ren, int x, int y);
+
 int main(int, char**)
 {
 	// Create vars
@@ -88,3 +97,44 @@ int main(int, char**)
 	return 0;
 }
 
+/**
+ * logSDLError: this function logs and SDL error message to the given output stream
+ * @param os The output stream to which the error is written to
+ * @param msg the content of the error message
+ */
+void logSDLError(std::ostream& os, const std::string& msg)
+{
+    os << msg << " error: " << SDL_GetError() << std::endl;
+}
+
+/**
+ * loadTexture: thus function loads a BMP image into a texture on the rendering device
+ * @param file The BMP file to load
+ * @param ren The renderer to load the texture to
+ * @return the loaded texture, or nullptr if something went wrong
+ */
+SDL_Texture* loadTexture(const std::string& file, SDL_Renderer* ren)
+{
+    // Init to nullptr to avoid dangling pointer issues
+    SDL_Texture* texture = nullptr;
+    // Load the image
+    SDL_Surface* loadedImage = SDL_LoadBMP(file.c_str());
+    // If the image was loaded successfully, convert and return the texture
+    if(loadedImage != nullptr)
+    {
+        texture = SDL_CreateTextureFromSurface(ren, loadedImage);
+        SDL_FreeSurface(loadedImage);
+        // Make sure the conversion was successful
+        if(texture == nullptr)
+        {
+            logSDLError(std::cout, "CreateTextureFromSurface");
+        }
+    }
+    else
+    {
+        logSDLError(std::cout, "LoadBMP");
+    }
+    return texture;
+}
+
+`
